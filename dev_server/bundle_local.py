@@ -16,6 +16,7 @@ import os
 import sys
 import pip.util
 import shutil
+import re
 
 TMP = 'virtualenv.bundle'
 
@@ -44,10 +45,11 @@ def main():
 
     # Get the dists in requirements.txt
     dists = []
-    for line in open(options.requirements, 'r').readlines():
-        if line.strip() or line.startswith('#'):
-            pass
-        pkg = line.split('==')[0]
+    for line in open(options.requirements, 'r'):
+        line = line.strip()
+        if not line or line.startswith('#'):
+            continue
+        pkg = re.split(r'=|>|<', line)[0]
 
         if pkg not in installed_dists:
             raise Exception('%s not installed' % pkg)
